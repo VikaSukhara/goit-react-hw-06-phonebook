@@ -2,11 +2,7 @@ import { nanoid } from 'nanoid';
 import { createSlice } from '@reduxjs/toolkit';
 
 
-const contacts = [
-  { id: 0, name: 'Viks', number: 3975397585758 },
-  { id: 1, name: 'Viks', number: 3975397585758 },
-  { id: 2, name: 'Viks', number: 3975397585758 },
-];
+const contacts = [];
 
 // slice
 const slice = createSlice({
