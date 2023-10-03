@@ -1,19 +1,24 @@
 import React from 'react';
 import { List, Item, Paragraph, Button } from './ContactList.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from 'components/redux/store';
+import { deleteContact } from '../redux/contactsSlice';
 
 export const ContactList = () => {
   const dispatch = useDispatch();
-  const filter = useSelector(state => state.filters);
-  const contacts = useSelector(state => state.contacts);
-  const filterNumbers = contacts.filter(user =>
-    user.name.toLowerCase().includes(filter)
-  );
+
+  const filter = useSelector(state => state.filterStore);
+
+  const contacts = useSelector(state => state.contactsStore);
+
+  const filteredUsers = contacts.filter(contact => {
+    return contact.name
+      .toLocaleLowerCase()
+      .includes(filter.toLocaleLowerCase());
+  });
 
   return (
     <List>
-      {filterNumbers.map(contact => {
+      {filteredUsers.map(contact => {
         return (
           <Item key={contact.id}>
             <Paragraph>

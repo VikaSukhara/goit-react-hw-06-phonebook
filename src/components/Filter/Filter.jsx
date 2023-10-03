@@ -1,4 +1,4 @@
-import { filter } from 'components/redux/store';
+import { filter } from '../redux/filterSlice';
 import { useDispatch } from 'react-redux';
 
 export const Filter = () => {

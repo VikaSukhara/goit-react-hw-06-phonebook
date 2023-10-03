@@ -9,7 +9,7 @@ import {
   StyledError,
 } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'components/redux/store';
+import { addContact } from '../redux/contactsSlice';
 
 const validation = Yup.object().shape({
   name: Yup.string()
@@ -24,8 +24,7 @@ const validation = Yup.object().shape({
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
-
+  const contacts = useSelector(state => state.contactsStore);
   const handlerSubmittingForm = ({ name, number }) => {
     if (contacts.find(contact => contact.name === name)) {
       alert(`${name} is alredy in contacts`);

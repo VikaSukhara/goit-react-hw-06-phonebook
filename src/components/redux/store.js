@@ -1,73 +1,51 @@
-import { createStore } from 'redux';
-import { devToolsEnhancer } from '@redux-devtools/extension';
-import { nanoid } from 'nanoid';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { contactReducer } from './contactsSlice';
+import { filterReducer } from './filterSlice';
+import storage from 'redux-persist/lib/storage';
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
 
-const initialState = {
-  contacts: [
-    { id: 0, name: 'Viks', number: 3975397585758 },
-    { id: 1, name: 'Petro', number: 498549894 },
-    { id: 2, name: 'Coco', number: 826478246726 },
-  ],
-  filters: '',
+// const initialState = {
+//   contactsStore: {
+//     contacts: [{ id: 0, name: 'Viks', number: 3975397585758 }],
+//   },
+//   filterStore: {
+//     filters: '',
+//   },
+// };
+
+// export const store = createStore(rootReducer, enhancer);
+
+/////////////////////////////local storage /////////////////////
+const persistConfig = {
+  key: 'root',
+  storage,
+  blacklist: ['filterInitioal'],
 };
 
-// action = грузовик, який везе дію користувача
-export const deleteContact = contactId => {
-  return {
-    type: 'contacts/delete',
-    payload: contactId,
-  };
-};
+const rootReducer = combineReducers({
+  contactsStore: contactReducer,
+  filterStore: filterReducer,
+});
 
-export const addContact = ({ name, number }) => {
-  return {
-    type: 'contacts/addContact',
-    payload: {
-      id: nanoid(),
-      name,
-      number,
-    },
-  };
-};
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export const filter = searchName => {
-  return {
-    type: 'filter/change',
-    payload: searchName,
-  };
-};
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
+});
 
-// //////////////////// reducers
-
-const rootReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'contacts/addContact': {
-      return {
-        ...state,
-        // та новий масив задач
-        contacts: [
-          ...state.contacts, // в якому є всі існуючі завдання
-          action.payload, // та об'єкт нового завдання
-        ],
-      };
-    }
-    case 'filter/change': {
-      const filteredUsers = state.contacts.filter(contact => {
-        return contact.name
-          .toLocaleLowerCase()
-          .includes(action.payload.toLocaleLowerCase());
-      });
-      return {
-        ...state,
-        filters: action.payload,
-        contacts: filteredUsers,
-      };
-    }
-    default:
-      return state;
-  }
-};
-
-const enhancer = devToolsEnhancer();
-
-export const store = createStore(rootReducer, enhancer);
+export const persistor = persistStore(store);
