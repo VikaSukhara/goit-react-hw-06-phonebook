@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
-import { createAction, createSlice } from '@reduxjs/toolkit';
-import { createReducer } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+
 
 const contacts = [
   { id: 0, name: 'Viks', number: 3975397585758 },
